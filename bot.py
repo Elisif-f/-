@@ -12,20 +12,11 @@ intents.message_content = True
 
 client = discord.Client(intents=intents)
 
-LOG_CHANNEL_ID = 1518596147483119676
-YOUR_USER_ID = 867067477765652480
+LOG_CHANNEL_ID = #id канала для логов
+YOUR_USER_ID = #id админов, которым разрешено
 
 SPAM_WINDOW_SECONDS = 10
 MIN_CHANNELS_FOR_BAN = 3
-CHANNELS_TO_CLEAN = [
-    1510980274954047508,  # скриншоты Котас джорни
-    1510993324604002476,  # скриншоты Котамон
-    1510988536763908156,  # скриншоты Ксенофилия
-    1510984788469878784,  # фан арт
-]
-
-
-IGNORED_ROLES = [1515343915090313216]
 
 user_channels = defaultdict(dict)
 
@@ -52,21 +43,6 @@ async def on_message(message):
         return
     if message.author.bot:
         return
-    if message.channel.id in CHANNELS_TO_CLEAN:
-        has_ignored_role = any(role.id in IGNORED_ROLES for role in message.author.roles)
-        if not has_ignored_role:
-            # Если в сообщении есть вложения (картинки) — пропускаем
-            if message.attachments:
-                return  # Ничего не делаем, оставляем сообщение
-            else:
-                # Если это просто текст — удаляем
-                try:
-                    await message.delete()
-                    print(f"🗑️ Удалено сообщение от {message.author} в {message.channel.name}: {message.content[:30]}")
-                except Exception as e:
-                    print(f"❌ Не удалось удалить сообщение: {e}")
-                return  # Сообщение удалено, дальше его не обрабатываем
-
     if not (message.author.guild_permissions.administrator or message.author.id == YOUR_USER_ID):
         now = datetime.now(timezone.utc)
         uid = message.author.id
